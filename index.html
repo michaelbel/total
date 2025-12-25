@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сложить все числа</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      display: grid;
+      place-content: center;
+      background: radial-gradient(circle at 20% 20%, #f1f5f9 0 40%, transparent 45%),
+                  radial-gradient(circle at 80% 0%, #e0f2fe 0 35%, transparent 40%),
+                  linear-gradient(135deg, #0f172a, #111827 35%, #0ea5e9 100%);
+      min-height: 100vh;
+      color: #e2e8f0;
+    }
+    .card {
+      width: min(720px, 100%);
+      padding: 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.72);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(226, 232, 240, 0.08);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+    p {
+      margin: 0 0 20px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(226, 232, 240, 0.15);
+      background: rgba(15, 23, 42, 0.55);
+      color: #e2e8f0;
+      resize: vertical;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    textarea:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+    }
+    .inputs {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(226, 232, 240, 0.15);
+      background: rgba(15, 23, 42, 0.55);
+      color: #e2e8f0;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    input[type="text"]:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+    }
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0b1020;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 25px rgba(14, 165, 233, 0.45);
+    }
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    .result {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .stat {
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(226, 232, 240, 0.06);
+    }
+    .label { color: #94a3b8; font-size: 14px; }
+    .value { font-size: 22px; font-weight: 700; }
+    footer {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #94a3b8;
+      text-align: right;
+    }
+    @media (max-width: 600px) {
+      body { padding: 24px 12px; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Сложить все числа</h1>
+    <p>Вставьте список чисел. Можно использовать любой разделитель, кроме точки и запятой — калькулятор сам найдёт числа и посчитает их сумму.</p>
+    <textarea id="numbers" placeholder="Например: 10 | 7 | 0.5 | -3"></textarea>
+    <div class="inputs">
+      <input id="newNumber" type="text" inputmode="decimal" placeholder="Быстро добавить число" />
+      <button id="add">Добавить</button>
+      <button id="calculate">Посчитать</button>
+    </div>
+    <div class="result">
+      <div class="stat">
+        <div class="label">Сумма</div>
+        <div id="sum" class="value">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Количество</div>
+        <div id="count" class="value">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Среднее</div>
+        <div id="avg" class="value">0</div>
+      </div>
+    </div>
+    <footer>Минималистичный офлайн-калькулятор — данные остаются только у вас.</footer>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('numbers');
+    const newNumber = document.getElementById('newNumber');
+    const sumEl = document.getElementById('sum');
+    const countEl = document.getElementById('count');
+    const avgEl = document.getElementById('avg');
+
+    function parseNumbers(input) {
+      const matches = input.match(/[-+]?\d+(?:[.,]\d+)?/g) || [];
+      return matches.map((token) => parseFloat(token.replace(',', '.'))).filter((n) => !Number.isNaN(n));
+    }
+
+    function render(numbers) {
+      const count = numbers.length;
+      const sum = numbers.reduce((acc, n) => acc + n, 0);
+      const avg = count ? sum / count : 0;
+      sumEl.textContent = sum.toLocaleString('ru-RU', { maximumFractionDigits: 6 });
+      countEl.textContent = count.toString();
+      avgEl.textContent = avg.toLocaleString('ru-RU', { maximumFractionDigits: 6 });
+    }
+
+    function calculate() {
+      const numbers = parseNumbers(textarea.value);
+      render(numbers);
+    }
+
+    document.getElementById('calculate').addEventListener('click', calculate);
+    document.getElementById('add').addEventListener('click', () => {
+      const value = newNumber.value.trim();
+      if (!value) return;
+      const prefix = textarea.value.trim() ? ' ' : '';
+      textarea.value += `${prefix}${value}`;
+      newNumber.value = '';
+      calculate();
+    });
+
+    textarea.addEventListener('input', calculate);
+    newNumber.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('add').click();
+      }
+    });
+
+    calculate();
+  </script>
+</body>
+</html>
