@@ -148,10 +148,13 @@
       const numbers = extractNumbers(input.value);
       const sum = numbers.reduce((acc, n) => acc + n, 0);
 
+      const roundedSum = Number(sum.toFixed(2));
+      const hasFraction = !Number.isInteger(roundedSum);
+
       sumEl.textContent = numbers.length
-        ? sum.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+        ? roundedSum.toLocaleString('en-US', {
+            minimumFractionDigits: hasFraction ? 2 : 0,
+            maximumFractionDigits: hasFraction ? 2 : 0,
             useGrouping: false,
           })
         : '0';
