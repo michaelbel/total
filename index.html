@@ -4,92 +4,153 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Сложить все числа</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <style>
     :root {
-      color-scheme: light dark;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #e4e7ec;
+      background-color: #0b0c10;
     }
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
-      background: linear-gradient(145deg, #0f172a 0%, #111827 35%, #0ea5e9 100%);
       display: grid;
       place-items: center;
-      padding: 32px 16px;
-      color: #e5e7eb;
+      padding: 48px 16px;
+      background: radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.2), transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(56, 189, 248, 0.2), transparent 22%),
+        linear-gradient(145deg, #0b0c10, #0f172a 45%, #0f172a 100%);
     }
+
     .panel {
-      width: min(720px, 100%);
-      background: rgba(15, 23, 42, 0.72);
-      border: 1px solid rgba(226, 232, 240, 0.08);
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(10px);
+      width: min(760px, 100%);
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0.96) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(12px);
       display: grid;
       gap: 18px;
     }
+
     header {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .title {
+      display: grid;
       gap: 6px;
     }
+
     h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 30px;
       letter-spacing: -0.02em;
     }
-    p {
-      margin: 0;
-      color: #cbd5e1;
-      line-height: 1.6;
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: linear-gradient(120deg, rgba(139, 92, 246, 0.18), rgba(56, 189, 248, 0.18));
+      color: #c7d2fe;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
+
     textarea {
       width: 100%;
-      min-height: 180px;
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(226, 232, 240, 0.14);
-      background: rgba(15, 23, 42, 0.6);
+      min-height: 200px;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(17, 24, 39, 0.7);
       color: #e2e8f0;
       resize: vertical;
       font-size: 16px;
+      line-height: 1.6;
       outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
+
     textarea:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+      border-color: rgba(139, 92, 246, 0.75);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transform: translateY(-1px);
     }
+
     .metrics {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      align-items: center;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
     }
+
     .stat {
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(226, 232, 240, 0.08);
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(56, 189, 248, 0.12));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
-    .label { color: #94a3b8; font-size: 14px; }
-    .value { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+
+    .label {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+      text-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
     @media (max-width: 640px) {
-      body { padding: 24px 12px; }
-      h1 { font-size: 24px; }
-      .value { font-size: 24px; }
+      body {
+        padding: 32px 12px;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .value {
+        font-size: 26px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="panel">
     <header>
-      <h1>Сложить все числа</h1>
-      <p>Вставьте или введите любые числа — сумма обновится автоматически.</p>
+      <div class="title">
+        <span class="tag">Суммирование</span>
+        <h1>Сложить все числа</h1>
+      </div>
+      <img src="favicon.svg" alt="Логотип" width="42" height="42" aria-hidden="true" />
     </header>
-    <textarea id="numbers" placeholder="Например: 10 | 7 | 1 000 | 0,5 | -3"></textarea>
+    <textarea id="numbers" placeholder="100 10.45 1 000.89"></textarea>
     <div class="metrics">
       <div class="stat">
         <div class="label">Сумма</div>
