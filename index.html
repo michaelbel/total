@@ -150,7 +150,11 @@
       const sum = numbers.reduce((acc, n) => acc + n, 0);
 
       sumEl.textContent = numbers.length
-        ? sum.toLocaleString('en-US', { maximumFractionDigits: 6, useGrouping: false })
+        ? sum.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: false,
+          })
         : '0';
     }
 
