@@ -151,13 +151,20 @@
       const roundedSum = Number(sum.toFixed(2));
       const hasFraction = !Number.isInteger(roundedSum);
 
-      sumEl.textContent = numbers.length
-        ? roundedSum.toLocaleString('en-US', {
-            minimumFractionDigits: hasFraction ? 2 : 0,
-            maximumFractionDigits: hasFraction ? 2 : 0,
-            useGrouping: false,
-          })
-        : '0';
+      if (!numbers.length) {
+        sumEl.textContent = '0';
+        return;
+      }
+
+      const formattedSum = roundedSum
+        .toLocaleString('en-US', {
+          minimumFractionDigits: hasFraction ? 2 : 0,
+          maximumFractionDigits: hasFraction ? 2 : 0,
+          useGrouping: true,
+        })
+        .replace(/,/g, ' ');
+
+      sumEl.textContent = formattedSum;
     }
 
     const MIN_TEXTAREA_HEIGHT = 192;
