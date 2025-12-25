@@ -148,9 +148,12 @@
         : '0';
     }
 
+    const MIN_TEXTAREA_HEIGHT = 180;
+
     function autoResize() {
       input.style.height = 'auto';
-      input.style.height = `${input.scrollHeight}px`;
+      const nextHeight = Math.max(input.scrollHeight, MIN_TEXTAREA_HEIGHT);
+      input.style.height = `${nextHeight}px`;
     }
 
     input.addEventListener('input', () => {
