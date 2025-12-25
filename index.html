@@ -26,8 +26,8 @@
     }
 
     .panel {
-      width: min(640px, 100%);
-      min-height: 420px;
+      width: min(780px, 100%);
+      min-height: 520px;
       background: #ffffff;
       border: 1px solid #e5e7eb;
       border-radius: 16px;
@@ -63,8 +63,8 @@
       line-height: 1.5;
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      resize: vertical;
-      min-height: 120px;
+      resize: none;
+      min-height: 140px;
     }
 
     input[type="text"]:focus,
@@ -75,12 +75,12 @@
     }
 
     .stat {
-      padding: 16px 18px;
+      padding: 12px 16px;
       border-radius: 12px;
       background: #f3f4f6;
       border: 1px solid #e5e7eb;
       display: grid;
-      gap: 6px;
+      gap: 4px;
     }
 
     .label {
@@ -131,8 +131,8 @@
     function extractNumbers(value) {
       if (!value.trim()) return [];
       return value
-        .match(/-?\d+(?:[.,]\d+)?/g)
-        ?.map((chunk) => chunk.replace(',', '.'))
+        .match(/-?[\d\s]+(?:[.,]\d+)?/g)
+        ?.map((chunk) => chunk.replace(/\s+/g, '').replace(',', '.'))
         .map((chunk) => parseFloat(chunk))
         .filter((num) => !Number.isNaN(num)) ?? [];
     }
@@ -146,7 +146,17 @@
         : '0';
     }
 
-    input.addEventListener('input', calculate);
+    function autoResize() {
+      input.style.height = 'auto';
+      input.style.height = `${input.scrollHeight}px`;
+    }
+
+    input.addEventListener('input', () => {
+      autoResize();
+      calculate();
+    });
+
+    autoResize();
     calculate();
   </script>
 </body>
