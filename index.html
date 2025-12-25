@@ -43,11 +43,6 @@
       color: #111827;
     }
 
-    .number-inputs {
-      display: grid;
-      gap: 12px;
-    }
-
     label {
       font-size: 14px;
       color: #4b5563;
@@ -55,7 +50,8 @@
       gap: 6px;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    textarea {
       width: 100%;
       padding: 12px 14px;
       border-radius: 10px;
@@ -66,9 +62,12 @@
       line-height: 1.5;
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      resize: vertical;
+      min-height: 120px;
     }
 
-    input[type="text"]:focus {
+    input[type="text"]:focus,
+    textarea:focus {
       border-color: #9ca3af;
       box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.25);
       background: #ffffff;
@@ -93,6 +92,7 @@
       font-weight: 700;
       letter-spacing: -0.02em;
       color: #111827;
+      word-break: break-word;
     }
 
     @media (max-width: 640px) {
@@ -110,20 +110,10 @@
   <div class="panel">
     <h1>Сложить все числа</h1>
 
-    <div class="number-inputs">
-      <label>
-        Число 1
-        <input type="text" class="number-field" inputmode="decimal" placeholder="Например, 120" />
-      </label>
-      <label>
-        Число 2
-        <input type="text" class="number-field" inputmode="decimal" placeholder="Например, 45.5" />
-      </label>
-      <label>
-        Число 3
-        <input type="text" class="number-field" inputmode="decimal" placeholder="Например, -10" />
-      </label>
-    </div>
+    <label>
+      Введите числа через пробел, запятую или перенос строки
+      <textarea class="numbers-field" inputmode="decimal" placeholder="Например, 120 45.5 -10 3,14"></textarea>
+    </label>
 
     <div class="stat">
       <div class="label">Сумма</div>
@@ -132,27 +122,28 @@
   </div>
 
   <script>
-    const inputs = Array.from(document.querySelectorAll('.number-field'));
+    const input = document.querySelector('.numbers-field');
     const sumEl = document.getElementById('sum');
 
-    function toNumber(value) {
-      if (!value) return null;
-      const parsed = parseFloat(value.replace(',', '.'));
-      return Number.isNaN(parsed) ? null : parsed;
+    function extractNumbers(value) {
+      if (!value.trim()) return [];
+      return value
+        .match(/-?\d+(?:[.,]\d+)?/g)
+        ?.map((chunk) => chunk.replace(',', '.'))
+        .map((chunk) => parseFloat(chunk))
+        .filter((num) => !Number.isNaN(num)) ?? [];
     }
 
     function calculate() {
-      const numbers = inputs
-        .map((input) => toNumber(input.value))
-        .filter((value) => value !== null);
-
+      const numbers = extractNumbers(input.value);
       const sum = numbers.reduce((acc, n) => acc + n, 0);
+
       sumEl.textContent = numbers.length
         ? sum.toLocaleString('ru-RU', { maximumFractionDigits: 6 })
         : '0';
     }
 
-    inputs.forEach((input) => input.addEventListener('input', calculate));
+    input.addEventListener('input', calculate);
     calculate();
   </script>
 </body>
