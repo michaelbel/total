@@ -26,7 +26,8 @@
     }
 
     .panel {
-      width: min(520px, 100%);
+      width: min(640px, 100%);
+      min-height: 420px;
       background: #ffffff;
       border: 1px solid #e5e7eb;
       border-radius: 16px;
@@ -111,8 +112,10 @@
     <h1>Сложить все числа</h1>
 
     <label>
-      Введите числа через пробел, запятую или перенос строки
-      <textarea class="numbers-field" inputmode="decimal" placeholder="Например, 120 45.5 -10 3,14"></textarea>
+      <textarea
+        class="numbers-field"
+        inputmode="decimal"
+        placeholder="120&#10;45.5&#10;-10&#10;3,14"></textarea>
     </label>
 
     <div class="stat">
