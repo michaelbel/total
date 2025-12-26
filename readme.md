@@ -3,7 +3,7 @@
 Веб-калькулятор, который складывает числа, введённые столбиком, и сразу показывает итоговую сумму.
 
 <div align="left">
-    <img src="cover.png" width="60%" alt="Cover">
+    <img src="cover.png">
 </div>
 
 ## Technologies
