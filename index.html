@@ -83,8 +83,64 @@
       border-radius: 12px;
       background: #f3f4f6;
       border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .stat-text {
       display: grid;
       gap: 4px;
+      min-width: 0;
+    }
+
+    .copy-button {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #4b5563;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .copy-button:hover {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .copy-button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.4);
+    }
+
+    .copy-button svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .copy-button .icon-done,
+    .copy-button.copied .icon-copy {
+      display: none;
+    }
+
+    .copy-button.copied .icon-done {
+      display: block;
+    }
+
+    .copy-button.copied {
+      color: #16a34a;
     }
 
     .label {
@@ -122,8 +178,19 @@
     </label>
 
     <div class="stat">
-      <div class="label">Сумма</div>
-      <div id="sum" class="value">0</div>
+      <div class="stat-text">
+        <div class="label">Сумма</div>
+        <div id="sum" class="value">0₽</div>
+      </div>
+      <button type="button" id="copy" class="copy-button" aria-label="Скопировать сумму" title="Скопировать">
+        <svg class="icon-copy" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <svg class="icon-done" viewBox="0 0 24 24" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </button>
     </div>
   </div>
 
@@ -133,6 +200,7 @@
     const header = document.querySelector('h1');
     const stat = document.querySelector('.stat');
     const sumEl = document.getElementById('sum');
+    const copyButton = document.getElementById('copy');
 
     function extractNumbers(value) {
       return value
@@ -152,7 +220,7 @@
       const hasFraction = !Number.isInteger(roundedSum);
 
       if (!numbers.length) {
-        sumEl.textContent = '0';
+        sumEl.textContent = '0₽';
         return;
       }
 
@@ -164,8 +232,34 @@
         })
         .replace(/,/g, ' ');
 
-      sumEl.textContent = formattedSum;
+      sumEl.textContent = `${formattedSum}₽`;
     }
+
+    let copiedTimeout;
+
+    async function writeToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        // Фолбэк для контекстов без Clipboard API (например, file://)
+        const helper = document.createElement('textarea');
+        helper.value = text;
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand('copy');
+        helper.remove();
+      }
+    }
+
+    copyButton.addEventListener('click', async () => {
+      // Копируем обычный текст (text/plain), без жирного начертания
+      await writeToClipboard(sumEl.textContent);
+      copyButton.classList.add('copied');
+      clearTimeout(copiedTimeout);
+      copiedTimeout = setTimeout(() => copyButton.classList.remove('copied'), 1500);
+    });
 
     const MIN_TEXTAREA_HEIGHT = 192;
 
